@@ -6,17 +6,11 @@
 [core]
 	excludesfile = ~/.gitignore_global
 	editor = nvim
-	# Best practices
 	autocrlf = input
 	quotepath = false
 	whitespace = trailing-space,space-before-tab,indent-with-non-tab,cr-at-eol
-	# Performance
 	packedGitLimit = 512m
 	packedGitWindowSize = 512m
-	# Git hooks
-	hooksPath = .githooks
-	# File mode handling
-	fileMode = false
 
 # Best practices for git
 [init]
@@ -44,9 +38,7 @@
 
 # Git merge
 [merge]
-	# Use the recursive strategy with rename detection
-	strategy = recursive
-	# Better merge conflict resolution
+	strategy = ort
 	conflictstyle = diff3
 
 # Git format
@@ -123,10 +115,10 @@
 	tag = tag -a
 	tagd = tag -d
 	tagl = tag -l
-[credential]
-    helper = cache --timeout=31536000
-
 # Machine-local identity and overrides — not committed to the repo.
+# Tip: set credential.helper in ~/.gitconfig.local for OS-specific keychain
+#   macOS: git config --file ~/.gitconfig.local credential.helper osxkeychain
+#   Linux: git config --file ~/.gitconfig.local credential.helper store
 # configure/configure.sh writes your name/email here during bootstrap.
 [include]
     path = ~/.gitconfig.local
