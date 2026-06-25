@@ -154,6 +154,11 @@ case "$ZSH_PROFILE" in
         ;;
 esac
 
+# ─── direnv ───────────────────────────────────────────────────────────────────
+if command -v direnv &>/dev/null; then
+    eval "$(direnv hook zsh)"
+fi
+
 # ─── tmux auto-attach (optional) ──────────────────────────────────────────────
 # Keep disabled by default for predictable shell startup.
 if [[ "${ZSH_TMUX_AUTO_ATTACH:-0}" == "1" ]] \
