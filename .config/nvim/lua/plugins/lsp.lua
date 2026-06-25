@@ -133,8 +133,11 @@ return {
                 map("n", "gy",         vim.lsp.buf.type_definition,   "Go to type definition")
 
                 -- Hover / signature
+                -- <C-k> is reserved for vim-tmux-navigator (TmuxNavigateUp) — do NOT
+                -- bind it in normal mode here or pane navigation breaks when LSP is active.
+                -- Signature help is available in insert mode or via :lua vim.lsp.buf.signature_help()
                 map("n", "K",          vim.lsp.buf.hover,             "Hover docs")
-                map("n", "<C-k>",      vim.lsp.buf.signature_help,    "Signature help")
+                map("i", "<C-k>",      vim.lsp.buf.signature_help,    "Signature help")
 
                 -- Actions
                 map("n", "<leader>rn", vim.lsp.buf.rename,            "Rename symbol")

@@ -8,19 +8,26 @@
 local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 
+-- Detect platform once; used throughout this file for OS-specific settings.
+local is_mac = wezterm.target_triple:find("darwin") ~= nil
+
 -- ─── Shell ────────────────────────────────────────────────────────────────────
 -- Use login shell if available; fall back to zsh.
 local login_shell = os.getenv("SHELL") or "/bin/zsh"
 config.default_prog = { login_shell, "-l" }
 
 -- ─── Terminal colour support ──────────────────────────────────────────────────
--- xterm-256color is the safest default — wezterm-256color terminfo causes
--- garbled output in some tools on this GNOME/Ubuntu setup.
+-- xterm-256color is the safest cross-platform default — wezterm-256color
+-- terminfo is missing from many systems and causes garbled output.
 config.term = "xterm-256color"
--- Kitty keyboard protocol causes key-repeat/input jitter on this setup.
-config.enable_kitty_keyboard = false
--- Native Wayland backend causes crashes/instability on this setup.
-config.enable_wayland = false
+
+-- ─── Linux-specific settings ─────────────────────────────────────────────────
+if not is_mac then
+    -- Kitty keyboard protocol causes key-repeat/input jitter on some Linux/X11 setups.
+    config.enable_kitty_keyboard = false
+    -- Native Wayland backend can cause crashes on some compositors; X11 via XWayland is stable.
+    config.enable_wayland = false
+end
 
 -- ─── Scrollback ───────────────────────────────────────────────────────────────
 config.scrollback_lines = 10000
@@ -80,12 +87,14 @@ config.font = wezterm.font("JetBrainsMono Nerd Font")
 config.font_size = 13.0
 
 -- Font rendering quality.
--- freetype_load_target controls hinting — "Normal" gives crisp baselines on
--- non-HiDPI displays; switch to "Light" if text feels too heavy.
--- freetype_render_target "HorizontalLcd" enables RGB subpixel rendering which
--- makes whites whiter and edges sharper on LCD panels.
-config.freetype_load_target    = "Normal"
-config.freetype_render_target  = "HorizontalLcd"
+-- freetype_* settings apply on Linux only; macOS uses CoreText and ignores them.
+-- "Normal" hinting gives crisp baselines on non-HiDPI displays (switch to
+-- "Light" if text feels too heavy). "HorizontalLcd" enables RGB subpixel
+-- rendering for sharper edges on LCD panels.
+if not is_mac then
+    config.freetype_load_target   = "Normal"
+    config.freetype_render_target = "HorizontalLcd"
+end
 
 -- ─── Key bindings ─────────────────────────────────────────────────────────────
 -- WezTerm's defaults intercept many Ctrl+letter combos that readline/zsh rely
@@ -96,7 +105,6 @@ config.freetype_render_target  = "HorizontalLcd"
 config.disable_default_key_bindings = true
 
 local act = wezterm.action
-local is_mac = wezterm.target_triple:find("darwin") ~= nil
 local mod = is_mac and "SUPER" or "SHIFT|CTRL"
 
 config.keys = {
@@ -137,8 +145,7 @@ config.keys = {
 
 -- ─── Mouse bindings ──────────────────────────────────────────────────────────
 config.mouse_bindings = {
-    -- Right-click pastes from clipboard (standard terminal behaviour on Linux).
-    -- If text is selected, right-click copies it instead.
+    -- Right-click pastes from clipboard; if text is selected, right-click copies instead.
     {
         event  = { Down = { streak = 1, button = "Right" } },
         mods   = "NONE",

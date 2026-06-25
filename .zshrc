@@ -29,11 +29,11 @@ if [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]]; then
 
     # SDKMAN internals are not fully nounset-safe; wrap sdk calls defensively.
     if typeset -f sdk >/dev/null 2>&1; then
-        functions -c sdk __linux_setup_sdk_inner
+        functions -c sdk __sdkman_inner
         sdk() {
             emulate -L zsh
             set +u
-            __linux_setup_sdk_inner "$@"
+            __sdkman_inner "$@"
         }
     fi
 fi
@@ -41,7 +41,9 @@ fi
 # ─── Completion ───────────────────────────────────────────────────────────────
 autoload -Uz compinit
 zmodload zsh/complist
-fpath+=("${XDG_CONFIG_HOME:-$HOME/.config}/hcloud/completion/zsh")
+# hcloud CLI completion — only add to fpath if the directory actually exists.
+[[ -d "${XDG_CONFIG_HOME:-$HOME/.config}/hcloud/completion/zsh" ]] && \
+    fpath+=("${XDG_CONFIG_HOME:-$HOME/.config}/hcloud/completion/zsh")
 mkdir -p "${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
 compinit -d "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/.zcompdump-${ZSH_VERSION}"
 
