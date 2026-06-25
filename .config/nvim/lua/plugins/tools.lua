@@ -52,19 +52,18 @@ return {
     },
 
     -- ─── Git ──────────────────────────────────────────────────────────────────
-    -- {
-    --     "lewis6991/gitsigns.nvim",
-    --     event = "BufReadPre",
-    --     opts  = {},
-    -- },
+    {
+        "lewis6991/gitsigns.nvim",
+        event = "BufReadPre",
+        opts  = {},
+    },
 
     -- ─── Which-key ────────────────────────────────────────────────────────────
-    -- Shows a popup with available key bindings.
-    -- {
-    --     "folke/which-key.nvim",
-    --     event = "VeryLazy",
-    --     opts  = {},
-    -- },
+    {
+        "folke/which-key.nvim",
+        event = "VeryLazy",
+        opts  = {},
+    },
 
     -- ─── Auto-pairs ───────────────────────────────────────────────────────────
     -- {
